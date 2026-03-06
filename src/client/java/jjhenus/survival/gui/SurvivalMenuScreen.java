@@ -3,7 +3,6 @@ package jjhenus.survival.gui;
 import jjhenus.survival.SurvivalScriptsClient;
 import jjhenus.survival.modules.FarmerModule;
 import jjhenus.survival.modules.TraderModule;
-import jjhenus.survival.modules.RollerModule;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,41 +16,54 @@ public class SurvivalMenuScreen extends Screen {
 
     @Override
     protected void init() {
-        int buttonWidth = 100;
-        int buttonHeight = 20;
-        int startY = 40;
-        int spacing = 25;
-        int centerX = this.width / 2;
+        int bw = 100, bh = 20, startY = 40, spacing = 25;
+        int cx = this.width / 2;
 
-        // Farmer Column
+        // Farmer
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Start Farmer"), b -> {
-            SurvivalScriptsClient.setActiveModule(new FarmerModule());
+            MinecraftClient client = MinecraftClient.getInstance();
+            FarmerModule farmer = new FarmerModule();
+            if (farmer.preflight(client)) {
+                SurvivalScriptsClient.setActiveModule(farmer);
+            }
             this.close();
-        }).dimensions(centerX - 155, startY, buttonWidth, buttonHeight).build());
+        }).dimensions(cx - 155, startY, bw, bh).build());
 
-        // Trader Column
+        // Trader
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Start Trader"), b -> {
             SurvivalScriptsClient.setActiveModule(new TraderModule());
             this.close();
-        }).dimensions(centerX - 50, startY, buttonWidth, buttonHeight).build());
+        }).dimensions(cx - 50, startY, bw, bh).build());
 
-        // Roller Column
+        // Roller — uses shared config
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Start Roller"), b -> {
-            SurvivalScriptsClient.setActiveModule(new RollerModule());
+            if (SurvivalScriptsClient.ROLLER_CONFIG.getWorkbenchPos() == null) {
+                if (MinecraftClient.getInstance().player != null)
+                    MinecraftClient.getInstance().player.sendMessage(
+                            Text.literal("§cUse '/traderoller pos' to set position first!"), false);
+            } else {
+                SurvivalScriptsClient.setActiveModule(SurvivalScriptsClient.createRollerFromConfig());
+            }
             this.close();
-        }).dimensions(centerX + 55, startY, buttonWidth, buttonHeight).build());
+        }).dimensions(cx + 55, startY, bw, bh).build());
 
-        // Global Stop Button
-        this.addDrawableChild(ButtonWidget.builder(Text.literal("STOP ALL"), b -> {
+        // Stop All
+        this.addDrawableChild(ButtonWidget.builder(Text.literal("§c§lSTOP ALL"), b -> {
             SurvivalScriptsClient.setActiveModule(null);
             this.close();
-        }).dimensions(centerX - 50, startY + (spacing * 5), buttonWidth, buttonHeight).build());
+        }).dimensions(cx - 50, startY + (spacing * 5), bw, bh).build());
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
         super.render(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
+
+        // Show roller config status
+        String rollerStatus = SurvivalScriptsClient.ROLLER_CONFIG.getWorkbenchPos() != null
+                ? "§aPos: " + SurvivalScriptsClient.ROLLER_CONFIG.getWorkbenchPos().toShortString()
+                : "§cPos: Not set";
+        context.drawCenteredTextWithShadow(this.textRenderer, Text.literal("§7Roller " + rollerStatus),
+                this.width / 2, this.height - 20, 0xFFFFFF);
     }
 }

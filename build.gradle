@@ -38,6 +38,8 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
 	filesMatching("fabric.mod.json") {
 		expand "version": inputs.properties.version
 	}
@@ -59,7 +61,7 @@ java {
 
 jar {
 	inputs.property "archivesName", project.base.archivesName
-
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
 	}

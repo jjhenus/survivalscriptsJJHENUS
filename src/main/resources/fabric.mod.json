@@ -1,40 +1,27 @@
 {
 	"schemaVersion": 1,
-	"id": "clayfarmer",
+	"id": "survival_scripts",
 	"version": "${version}",
-	"name": "clayfarmer",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Survival Scripts",
+	"description": "Automated survival tools - clay farming, trading, and rolling.",
 	"authors": [
-		"Me!"
+		"jjhenus"
 	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
 	"license": "CC0-1.0",
-	"icon": "assets/clayfarmer/icon.png",
+	"icon": "assets/survival_scripts/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"jjhenus.clayfarmer.Clayfarmer"
+			"jjhenus.survival.SurvivalScripts"
 		],
 		"client": [
-			"jjhenus.clayfarmer.ClayfarmerClient",
-			"jjhenus.clayfarmer.ClayTraderBot",
-			"jjhenus.clayfarmer.TradeRollerBot",
-			"jjhenus.clayfarmer.ClayMenuInit"
+			"jjhenus.survival.SurvivalScriptsClient"
 		]
 	},
-	"mixins": [
-		"clayfarmer.mixins.json",
-		{
-			"config": "clayfarmer.client.mixins.json",
-			"environment": "client"
-		}
-	],
+	"mixins": [],
 	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": "~1.21.11",
+		"fabricloader": ">=0.16.0",
+		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*"
 	}
